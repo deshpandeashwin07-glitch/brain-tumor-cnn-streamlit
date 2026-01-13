@@ -1,3 +1,5 @@
+import os
+import gdown
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
@@ -6,7 +8,18 @@ import numpy as np
 from PIL import Image
 
 # Load trained model
-model = load_model("brain_tumor_cnn.h5")
+MODEL_PATH = "brain_tumor_cnn.h5"
+
+@st.cache_resource
+def load_cnn_model():
+    if not os.path.exists(MODEL_PATH):
+        file_id = "143mm8SNL-P0IwksENmmyt8Ja7nxApwbB"
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, MODEL_PATH, quiet=False)
+    return load_model(MODEL_PATH)
+
+model = load_cnn_model()
+
 
 # Class names (must match training folder order)
 class_names = ['glioma', 'meningioma', 'notumor', 'pituitary']
